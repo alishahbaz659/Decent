@@ -31,24 +31,6 @@ const RightSidebar = ({ getUsers, users }) => {
           <div className={style.adImageContainer}>
             <Image
               src={
-                'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/284832/settings_images/HpzVcovxQz28Br7GkRyq_15289248_269068140162594_1580546814749307408_o_1_.png'
-              }
-              height={100}
-              width={100}
-              className={style.adImage}
-              alt='cp logo'
-            />
-            ˚
-          </div>
-          <div>
-            <div>The #1 Channel for Blockchain Development</div>
-            <div className={style.adLink}>cleverprogrammer.com</div>
-          </div>
-        </div>
-        <div className={style.ad}>
-          <div className={style.adImageContainer}>
-            <Image
-              src={
                 'https://www.cityam.com/wp-content/uploads/2021/08/Solana-1.jpg'
               }
               height={100}

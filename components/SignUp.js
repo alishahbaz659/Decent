@@ -1,9 +1,10 @@
 import Image from 'next/image'
+import logo from '../assets/decentlogo.png'
 
 const SignUp = ({ setRegistered, name, setName, url, setUrl }) => {
   const style = {
     wrapper: `flex flex-col p-4 justify-center items-center h-full w-full bg-[#252526] w-min h-min rounded-2xl`,
-    title: `text-[#afb3b8] font-semibold text-lg`,
+    title: `text-[#afb3b8] font-semibold text-lg pb-6`,
     form: `flex flex-col items-center`,
     fieldContainer: `my-4 `,
     inputTitle: `text-[#afb3b8] font-semibold mb-2 ml-3`,
@@ -47,13 +48,13 @@ const SignUp = ({ setRegistered, name, setName, url, setUrl }) => {
     <div className={style.wrapper}>
       <div className={style.logoContainer}>
         <Image
-          src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Facebook_f_logo_%282019%29.svg/1200px-Facebook_f_logo_%282019%29.svg.png'
-          height={40}
-          width={40}
-          alt='facebook logo'
+          src={logo}
+          height={70}
+          width={70}
+          alt='solana logo'
         />
       </div>
-      <div className={style.title}>Please sign up to use Facebook</div>
+      <div className={style.title}>Please sign up to use Decent</div>
       <form onSubmit={createUser} className={style.form}>
         <div className={style.fieldContainer}>
           <div className={style.inputTitle}>Name</div>
