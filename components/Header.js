@@ -100,8 +100,8 @@ const Header = ({ name, url }) => {
       // </div>
     // </div>
 
-<nav class="flex items-center justify-between w-full flex-wrap bg-teal p-6">
-  <div class="flex items-center flex-no-shrink text-white mr-6">
+<nav className="flex items-center justify-between w-full flex-wrap bg-teal p-6">
+  <div className="flex items-center flex-no-shrink text-white mr-6">
   <div className={style.headerLeft}>
         <Image
           className={style.facebookLogo}
@@ -122,17 +122,17 @@ const Header = ({ name, url }) => {
       
   </div>
 
-  <div class="contents lg:hidden">
-    <button id="nav-toggle" data-collapse-toggle="navbar-sticky" aria-controls="navbar-sticky" aria-expanded="false" class="flex items-center px-3 py-2 border rounded text-gray-500 border-gray-600 hover:text-white hover:border-white">
-				<svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
+  <div className="contents lg:hidden">
+    <button id="nav-toggle" data-collapse-toggle="navbar-sticky" aria-controls="navbar-sticky" aria-expanded="false" className="flex items-center px-3 py-2 border rounded text-gray-500 border-gray-600 hover:text-white hover:border-white">
+				<svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
 			</button>
   </div>
 
-  <div class="items-center justify-between hidden w-full md:flex md:w-auto" id="nav-content">
+  <div className="items-center justify-between hidden w-full md:flex md:w-auto" id="nav-content">
    
-    <div class="text-sm lg:flex-grow"  style={{textAlign:'center'}}>
+    <div className="text-sm lg:flex-grow"  style={{textAlign:'center'}}>
       
-      <a class="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">
+      <a className="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">
           <div className={style.centerNavIconContainer} style={{justifyContent:'center'}}>
             <AiFillHome className={style.centerNavIcon} />
             <p style={{color:'white',paddingLeft:'5px'}}>Home</p>  
@@ -140,7 +140,7 @@ const Header = ({ name, url }) => {
           
       
       </a>
-      <a  class="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">
+      <a  className="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">
           <div className={style.centerNavIconContainer} style={{justifyContent:'center'}}>
           <BsDisplay className={style.centerNavIcon}></BsDisplay>
           <p style={{color:'white',paddingLeft:'5px'}}>Videos</p>
@@ -148,13 +148,13 @@ const Header = ({ name, url }) => {
 
       </a>
       
-      <a class="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">  
+      <a className="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">  
           <div className={style.centerNavIconContainer} style={{justifyContent:'center'}}>
           <RiGroup2Line className={style.centerNavIcon} />
           <p style={{color:'white',paddingLeft:'5px'}}>Groups</p>
           </div>
       </a>
-      <a class="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">
+      <a className="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">
           <div className={style.centerNavIconContainer} style={{justifyContent:'center'}}>
           <SiFacebookgaming className={style.centerNavIcon} />
           <p style={{color:'white',paddingLeft:'5px'}}>Gaming </p>
@@ -164,7 +164,7 @@ const Header = ({ name, url }) => {
     
     <div style={{display:'flex',justifyContent:'center'}}>
     
-      <a  class="inline-block text-sm px-4 py-2 leading-none  mt-2 lg:mt-0">
+      <a  className="inline-block text-sm px-4 py-2 leading-none  mt-2 lg:mt-0">
       <div className={style.headerRight}>
         <WalletMultiButton/>
       </div>
