@@ -130,7 +130,7 @@ const Header = ({ name, url }) => {
 
   <div className="items-center justify-between hidden w-full md:flex md:w-auto" id="nav-content">
    
-    <div className="text-sm lg:flex-grow"  style={{textAlign:'center'}}>
+    <div className="text-sm lg:flex-grow"  style={{textAlign:'center',padding:'15px'}}>
       
       <a className="block mt-4 lg:inline-flex lg:mt-0 text-teal-lighter hover:text-white mr-4">
           <div className={style.centerNavIconContainer} style={{justifyContent:'center'}}>

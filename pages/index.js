@@ -40,7 +40,7 @@ export default function Home() {
   }
 
   return (
-    <div className={style.wrapper}>
+    <div className={style.wrapper} style={{width:'fit-content'}}>
       <Header name={name} url={url} />
 
       {registered ? (
