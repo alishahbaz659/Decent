@@ -40,20 +40,20 @@ export default function Home() {
   }
 
   return (
-    <div className={style.wrapper} style={{width:'max-content'}}>
+    <div className={style.wrapper}>
       <Header name={name} url={url} />
 
       {registered ? (
         <div className={style.homeWrapper}>
-          <Sidebar name={name} url={url} />
+          {/* <Sidebar name={name} url={url} /> */}
           <div className={style.main}>
             <Feed connected={wallet.connected} name={name} url={url} />
           </div>
-          <RightSidebar
+          {/* <RightSidebar
             getUsers={requestUsersData}
             users={users}
             setUsers={setUsers}
-          />
+          /> */}
         </div>
       ) : (
         <div className={style.signupContainer}>
