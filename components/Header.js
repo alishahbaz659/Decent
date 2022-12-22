@@ -23,7 +23,7 @@ const Header = ({ name, url }) => {
     wrapper: `flex items-center w-full h-[4rem] justify-around px-[1rem] py-[0.2rem] sticky top-0 bg-[#252526] shadow-[0px 5px 8px -9px rgba(0, 0, 0, 0.75)] z-20`,
     headerLeft: `flex justify-center gap-[0.6rem]`,
     facebookLogo: `items-center flex object-contain`,
-    searchContainer: `flex items-center bg-[#3a3b3d] max-w-[10rem] rounded-full py-2 px-2 text-[#b0b3b8]`,
+    searchContainer: `flex items-center bg-[#3a3b3d] max-w-[14rem] rounded-full py-2 px-2 text-[#b0b3b8]`,
     searchInput: `border-none px-[0.6rem] bg-transparent outline-none w-[15rem] text-white placeholder:text-[#b0b3b8]`,
     headerCenterContainer: `flex-1 flex items-center justify-center h-full`,
     headerCenterWrapper: `flex justify-center h-full py-2`,
