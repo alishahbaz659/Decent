@@ -24,29 +24,28 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   }
 
   const wallet = useWallet()
-  useEffect(()=>{
-    if(!wallet.connected){
-      setRegistered(false)
-      setName('')
-      setUrl('')
+  if (!wallet.connected) {
+    setRegistered(false)
+    setName('')
+    setUrl('')
   }
-  })
- 
- 
+
+
+
   const connection = new anchor.web3.Connection(SOLANA_HOST)
   const program = getProgramInstance(connection, wallet)
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
 
 
-    useEffect(() => {
-      const interval = setInterval(async () => {
-        await getAllPosts()
-      }, 2000)
-      getAllPosts()
-      return () => clearInterval(interval)
-    }, [connected, getAllPosts])
-  
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      await getAllPosts()
+    }, 2000)
+    getAllPosts()
+    return () => clearInterval(interval)
+  }, [connected, getAllPosts])
+
   useEffect(() => {
     toast('Posts Refreshed!', {
       icon: '🔁',
@@ -59,20 +58,20 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   }, [posts.length])
 
   const getAllPosts = async () => {
-      try {
-        const postsData = await program.account.postAccount.all()
+    try {
+      const postsData = await program.account.postAccount.all()
 
-        postsData.sort(
-          (a, b) => b.account.postTime.toNumber() - a.account.postTime.toNumber(),
-        )
+      postsData.sort(
+        (a, b) => b.account.postTime.toNumber() - a.account.postTime.toNumber(),
+      )
 
-        setPosts(postsData)
+      setPosts(postsData)
 
-        setLoading(false)
-      } catch (error) {
-        console.error(error)
-      }
-    
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+    }
+
   }
 
   const getCommentsOnPost = async (index, oldPost) => {
@@ -116,7 +115,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
       [utf8.encode('state')],
       program.programId,
     )
-   
+
     let stateInfo
 
     try {
@@ -132,7 +131,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
 
       return
     }
-    
+
 
     let [postSigner] = await anchor.web3.PublicKey.findProgramAddress(
       [utf8.encode('post'), stateInfo.postCount.toArrayLike(Buffer, 'be', 8)],
@@ -141,7 +140,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
 
     try {
       await program.account.postAccount.fetch(postSigner)
-     
+
     } catch {
       console.log("in catch")
       await program.rpc.createPost(text, name, url, {
@@ -151,7 +150,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
           authority: wallet.publicKey,
           ...defaultAccounts,
         },
-      }).then((resp)=>{
+      }).then((resp) => {
         // console.log("Posted successfully")
         toast('Posted Successfully!', {
           icon: '✅',
@@ -171,7 +170,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
         })
 
 
-      }).catch((error)=>{
+      }).catch((error) => {
         console.log("user rejected the transaction")
       })
 
@@ -202,7 +201,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
           authority: wallet.publicKey,
           ...defaultAccounts,
         },
-      }).then((resp)=>{
+      }).then((resp) => {
         console.log(resp)
         toast('Comment posted Successfully!', {
           icon: '✅',
@@ -212,7 +211,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
             color: '#fffcf9',
           },
         })
-      }).catch((error)=>{
+      }).catch((error) => {
         console.log("user rejected the transaction")
       })
 
@@ -221,7 +220,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
       console.error(error)
     }
   }
-  
+
 
   return (
     <div className={style.wrapper}>
