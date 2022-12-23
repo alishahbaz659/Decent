@@ -18,24 +18,35 @@ const defaultAccounts = {
   systemProgram: SystemProgram.programId,
 }
 
-const Feed = ({ connected, name, url }) => {
+const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   const style = {
     wrapper: `flex-1 max-w-2xl mx-4`,
   }
 
   const wallet = useWallet()
+  if(!wallet.connected){
+      setRegistered(false)
+      setName('')
+      setUrl('')
+      return
+  }
   const connection = new anchor.web3.Connection(SOLANA_HOST)
   const program = getProgramInstance(connection, wallet)
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      await getAllPosts()
-    }, 2000)
-    getAllPosts()
-    return () => clearInterval(interval)
-  }, [connected, getAllPosts])
+
+  if (wallet.connected) {
+    useEffect(() => {
+      const interval = setInterval(async () => {
+        await getAllPosts()
+      }, 2000)
+      getAllPosts()
+      return () => clearInterval(interval)
+    }, [connected, getAllPosts])
+  } else {
+    console.log("wallet not connected")
+  }
 
   useEffect(() => {
     toast('Posts Refreshed!', {
@@ -49,18 +60,20 @@ const Feed = ({ connected, name, url }) => {
   }, [posts.length])
 
   const getAllPosts = async () => {
-    try {
-      const postsData = await program.account.postAccount.all()
+    if (wallet.connected) {
+      try {
+        const postsData = await program.account.postAccount.all()
 
-      postsData.sort(
-        (a, b) => b.account.postTime.toNumber() - a.account.postTime.toNumber(),
-      )
+        postsData.sort(
+          (a, b) => b.account.postTime.toNumber() - a.account.postTime.toNumber(),
+        )
 
-      setPosts(postsData)
+        setPosts(postsData)
 
-      setLoading(false)
-    } catch (error) {
-      console.error(error)
+        setLoading(false)
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 
@@ -105,7 +118,7 @@ const Feed = ({ connected, name, url }) => {
       [utf8.encode('state')],
       program.programId,
     )
-
+   
     let stateInfo
 
     try {
@@ -121,6 +134,7 @@ const Feed = ({ connected, name, url }) => {
 
       return
     }
+    
 
     let [postSigner] = await anchor.web3.PublicKey.findProgramAddress(
       [utf8.encode('post'), stateInfo.postCount.toArrayLike(Buffer, 'be', 8)],
@@ -129,7 +143,9 @@ const Feed = ({ connected, name, url }) => {
 
     try {
       await program.account.postAccount.fetch(postSigner)
+     
     } catch {
+      console.log("in catch")
       await program.rpc.createPost(text, name, url, {
         accounts: {
           state: stateSigner,
@@ -137,6 +153,28 @@ const Feed = ({ connected, name, url }) => {
           authority: wallet.publicKey,
           ...defaultAccounts,
         },
+      }).then((resp)=>{
+        // console.log("Posted successfully")
+        toast('Posted Successfully!', {
+          icon: '✅',
+          style: {
+            borderRadius: '10px',
+            background: '#252526',
+            color: '#fffcf9',
+          },
+        })
+        toast('Will update on network soon!', {
+          icon: '🚀',
+          style: {
+            borderRadius: '10px',
+            background: '#252526',
+            color: '#fffcf9',
+          },
+        })
+
+
+      }).catch((error)=>{
+        console.log("user rejected the transaction")
       })
 
       setPosts(await program.account.postAccount.all())
@@ -166,6 +204,18 @@ const Feed = ({ connected, name, url }) => {
           authority: wallet.publicKey,
           ...defaultAccounts,
         },
+      }).then((resp)=>{
+        console.log(resp)
+        toast('Comment posted Successfully!', {
+          icon: '✅',
+          style: {
+            borderRadius: '10px',
+            background: '#252526',
+            color: '#fffcf9',
+          },
+        })
+      }).catch((error)=>{
+        console.log("user rejected the transaction")
       })
 
       await program.account.commentAccount.fetch(commentSigner)
@@ -179,7 +229,7 @@ const Feed = ({ connected, name, url }) => {
       <Toaster position='bottom-left' reverseOrder={false} />
       <div>
         {loading ? (
-          <div>Loading...</div>
+          <div style={{ color: 'white' }}>Loading...</div>
         ) : (
           <div>
             <CreatePost

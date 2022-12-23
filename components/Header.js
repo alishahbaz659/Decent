@@ -100,8 +100,8 @@ const Header = ({ name, url }) => {
       // </div>
     // </div>
 
-<nav className="flex items-center justify-between w-full flex-wrap bg-teal p-6">
-  <div className="flex items-center flex-no-shrink text-white mr-6">
+<nav className="flex items-center justify-between w-full flex-wrap bg-teal p-6" >
+  <div className="flex items-center flex-no-shrink text-white mr-6" >
   <div className={style.headerLeft}>
         <Image
           className={style.facebookLogo}

@@ -2,6 +2,7 @@ import Image from 'next/image'
 import logo from '../assets/decentlogo.png'
 import { useWallet } from '@solana/wallet-adapter-react'
 import Swal from 'sweetalert2'
+import toast, { Toaster } from 'react-hot-toast'
 
 const SignUp = ({ setRegistered, name, setName, url, setUrl }) => {
   const style = {
@@ -19,29 +20,70 @@ const SignUp = ({ setRegistered, name, setName, url, setUrl }) => {
 
   const wallet = useWallet()
   function checkWallet() {
-   
-    if (!wallet.connected) {
-      console.log("Wallet not connected")
-      setRegistered(false)
 
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'bottom-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-      })
-      
-      Toast.fire({
-        icon: 'error',
-        title: 'Please connect phantom wallet from navigation menu'
-      })
+    if(name=='' || url ==''){
+        console.log("Please enter all details")
+        // const Toast = Swal.mixin({
+        //   toast: true,
+        //   position: 'bottom-end',
+        //   showConfirmButton: false,
+        //   timer: 3000,
+        //   timerProgressBar: true,
+        //   didOpen: (toast) => {
+        //     toast.addEventListener('mouseenter', Swal.stopTimer)
+        //     toast.addEventListener('mouseleave', Swal.resumeTimer)
+        //   }
+        // })
+        
+        // Toast.fire({
+        //   icon: 'warning',
+        //   title: 'Fields should not be empty'
+        // })
+
+
+        toast('Fields should not be empty!', {
+          icon: '❌',
+          style: {
+            borderRadius: '10px',
+            background: '#252526',
+            color: '#fffcf9',
+          },
+        })
+
     }else{
-       createUser()
+      if (!wallet.connected) {
+        console.log("Wallet not connected")
+        setRegistered(false)
+  
+        // const Toast = Swal.mixin({
+        //   toast: true,
+        //   position: 'bottom-end',
+        //   showConfirmButton: false,
+        //   timer: 3000,
+        //   timerProgressBar: true,
+        //   didOpen: (toast) => {
+        //     toast.addEventListener('mouseenter', Swal.stopTimer)
+        //     toast.addEventListener('mouseleave', Swal.resumeTimer)
+        //   }
+        // })
+        
+        // Toast.fire({
+        //   icon: 'error',
+        //   title: 'Please connect phantom wallet from navigation menu'
+        // })
+
+        toast('Please connect phantom wallet from navigation menu!', {
+          icon: '⛔',
+          style: {
+            borderRadius: '10px',
+            background: '#252526',
+            color: '#fffcf9',
+          },
+        })
+
+      }else{
+         createUser()
+      }
     }
   }
 
@@ -49,6 +91,7 @@ const SignUp = ({ setRegistered, name, setName, url, setUrl }) => {
   const createUser = async event => {
 
     setRegistered(true)
+   
     const resp = await window.solana.connect()
     const walletAddress = resp.publicKey.toString()
 
@@ -79,6 +122,7 @@ const generateRandomProfileImageUrl = () =>
 
 return (
   <div className={style.wrapper}>
+    <Toaster position='bottom-left' reverseOrder={false} />
     <div className={style.logoContainer}>
       <Image
         src={logo}
@@ -93,6 +137,7 @@ return (
       <div className={style.inputTitle}>Name</div>
       <div className={style.inputContainer}>
         <input
+          id='userName'
           value={name}
           onChange={event => setName(event.target.value)}
           required
@@ -104,6 +149,7 @@ return (
       <div className={style.inputTitle}>Profile Image URL</div>
       <div className={style.inputContainer}>
         <input
+          id='userImageUrl'
           value={url}
           onChange={event => setUrl(event.target.value)}
           required
