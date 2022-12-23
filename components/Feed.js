@@ -24,19 +24,13 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   }
 
   const wallet = useWallet()
-  if(!wallet.connected){
-      setRegistered(false)
-      setName('')
-      setUrl('')
-      return
-  }
+ 
   const connection = new anchor.web3.Connection(SOLANA_HOST)
   const program = getProgramInstance(connection, wallet)
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
 
 
-  if (wallet.connected) {
     useEffect(() => {
       const interval = setInterval(async () => {
         await getAllPosts()
@@ -44,10 +38,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
       getAllPosts()
       return () => clearInterval(interval)
     }, [connected, getAllPosts])
-  } else {
-    console.log("wallet not connected")
-  }
-
+  
   useEffect(() => {
     toast('Posts Refreshed!', {
       icon: '🔁',
@@ -60,7 +51,6 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   }, [posts.length])
 
   const getAllPosts = async () => {
-    if (wallet.connected) {
       try {
         const postsData = await program.account.postAccount.all()
 
@@ -74,7 +64,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
       } catch (error) {
         console.error(error)
       }
-    }
+    
   }
 
   const getCommentsOnPost = async (index, oldPost) => {
@@ -222,6 +212,12 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
     } catch (error) {
       console.error(error)
     }
+  }
+   if(!wallet.connected){
+      setRegistered(false)
+      setName('')
+      setUrl('')
+      return
   }
 
   return (
