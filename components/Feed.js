@@ -24,208 +24,208 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   }
 
   const wallet = useWallet()
-  if (!wallet.connected) {
-    setRegistered(false)
-    setName('')
-    setUrl('')
+  if(!wallet.connected){
+      setRegistered(false)
+      // setName('')
+      // setUrl('')
+  }
+ 
+ 
+ 
+  const connection = new anchor.web3.Connection(SOLANA_HOST)
+  const program = getProgramInstance(connection, wallet)
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+
+
+    useEffect(() => {
+      const interval = setInterval(async () => {
+        await getAllPosts()
+      }, 2000)
+      getAllPosts()
+      return () => clearInterval(interval)
+    }, [connected, getAllPosts])
+  
+  useEffect(() => {
+    toast('Posts Refreshed!', {
+      icon: '🔁',
+      style: {
+        borderRadius: '10px',
+        background: '#252526',
+        color: '#fffcf9',
+      },
+    })
+  }, [posts.length])
+
+  const getAllPosts = async () => {
+      try {
+        const postsData = await program.account.postAccount.all()
+
+        postsData.sort(
+          (a, b) => b.account.postTime.toNumber() - a.account.postTime.toNumber(),
+        )
+
+        setPosts(postsData)
+
+        setLoading(false)
+      } catch (error) {
+        console.error(error)
+      }
+    
   }
 
+  const getCommentsOnPost = async (index, oldPost) => {
+    try {
+      let [postSigner] = await anchor.web3.PublicKey.findProgramAddress(
+        [utf8.encode('post'), index.toArrayLike(Buffer, 'be', 8)],
+        program.programId,
+      )
+
+      const post = await program.account.postAccount.fetch(postSigner)
+
+      let commentSigners = []
+
+      for (let i = 0; i < post.commentCount.toNumber(); i++) {
+        let [commentSigner] = await anchor.web3.PublicKey.findProgramAddress(
+          [
+            utf8.encode('comment'),
+            new BN(index).toArrayLike(Buffer, 'be', 8),
+            new BN(i).toArrayLike(Buffer, 'be', 8),
+          ],
+          program.programId,
+        )
+
+        commentSigners.push(commentSigner)
+      }
+
+      const comments = await program.account.commentAccount.fetchMultiple(
+        commentSigners,
+      )
+
+      comments.sort((a, b) => a.postTime.toNumber() - b.postTime.toNumber())
+
+      return comments
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const savePost = async text => {
+    let [stateSigner] = await anchor.web3.PublicKey.findProgramAddress(
+      [utf8.encode('state')],
+      program.programId,
+    )
+   
+    let stateInfo
+
+    try {
+      stateInfo = await program.account.stateAccount.fetch(stateSigner)
+    } catch (error) {
+      await program.rpc.createState({
+        accounts: {
+          state: stateSigner,
+          authority: wallet.publicKey,
+          ...defaultAccounts,
+        },
+      })
+
+      return
+    }
+    
+
+    let [postSigner] = await anchor.web3.PublicKey.findProgramAddress(
+      [utf8.encode('post'), stateInfo.postCount.toArrayLike(Buffer, 'be', 8)],
+      program.programId,
+    )
+
+    try {
+      await program.account.postAccount.fetch(postSigner)
+     
+    } catch {
+      console.log("in catch")
+      await program.rpc.createPost(text, name, url, {
+        accounts: {
+          state: stateSigner,
+          post: postSigner,
+          authority: wallet.publicKey,
+          ...defaultAccounts,
+        },
+      }).then((resp)=>{
+        // console.log("Posted successfully")
+        toast('Posted Successfully!', {
+          icon: '✅',
+          style: {
+            borderRadius: '10px',
+            background: '#252526',
+            color: '#fffcf9',
+          },
+        })
+        toast('Will update on network soon!', {
+          icon: '🚀',
+          style: {
+            borderRadius: '10px',
+            background: '#252526',
+            color: '#fffcf9',
+          },
+        })
 
 
-  // const connection = new anchor.web3.Connection(SOLANA_HOST)
-  // const program = getProgramInstance(connection, wallet)
-  // const [posts, setPosts] = useState([])
-  // const [loading, setLoading] = useState(true)
+      }).catch((error)=>{
+        console.log("user rejected the transaction")
+      })
 
+      setPosts(await program.account.postAccount.all())
+    }
+  }
 
-  // useEffect(() => {
-  //   const interval = setInterval(async () => {
-  //     await getAllPosts()
-  //   }, 2000)
-  //   getAllPosts()
-  //   return () => clearInterval(interval)
-  // }, [connected, getAllPosts])
+  const saveComment = async (text, index, count) => {
+    let [postSigner] = await anchor.web3.PublicKey.findProgramAddress(
+      [utf8.encode('post'), index.toArrayLike(Buffer, 'be', 8)],
+      program.programId,
+    )
 
-  // useEffect(() => {
-  //   toast('Posts Refreshed!', {
-  //     icon: '🔁',
-  //     style: {
-  //       borderRadius: '10px',
-  //       background: '#252526',
-  //       color: '#fffcf9',
-  //     },
-  //   })
-  // }, [posts.length])
+    try {
+      let [commentSigner] = await anchor.web3.PublicKey.findProgramAddress(
+        [
+          utf8.encode('comment'),
+          index.toArrayLike(Buffer, 'be', 8),
+          count.toArrayLike(Buffer, 'be', 8),
+        ],
+        program.programId,
+      )
 
-  // const getAllPosts = async () => {
-  //   try {
-  //     const postsData = await program.account.postAccount.all()
+      await program.rpc.createComment(text, name, url, {
+        accounts: {
+          post: postSigner,
+          comment: commentSigner,
+          authority: wallet.publicKey,
+          ...defaultAccounts,
+        },
+      }).then((resp)=>{
+        console.log(resp)
+        toast('Comment posted Successfully!', {
+          icon: '✅',
+          style: {
+            borderRadius: '10px',
+            background: '#252526',
+            color: '#fffcf9',
+          },
+        })
+      }).catch((error)=>{
+        console.log("user rejected the transaction")
+      })
 
-  //     postsData.sort(
-  //       (a, b) => b.account.postTime.toNumber() - a.account.postTime.toNumber(),
-  //     )
-
-  //     setPosts(postsData)
-
-  //     setLoading(false)
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-
-  // }
-
-  // const getCommentsOnPost = async (index, oldPost) => {
-  //   try {
-  //     let [postSigner] = await anchor.web3.PublicKey.findProgramAddress(
-  //       [utf8.encode('post'), index.toArrayLike(Buffer, 'be', 8)],
-  //       program.programId,
-  //     )
-
-  //     const post = await program.account.postAccount.fetch(postSigner)
-
-  //     let commentSigners = []
-
-  //     for (let i = 0; i < post.commentCount.toNumber(); i++) {
-  //       let [commentSigner] = await anchor.web3.PublicKey.findProgramAddress(
-  //         [
-  //           utf8.encode('comment'),
-  //           new BN(index).toArrayLike(Buffer, 'be', 8),
-  //           new BN(i).toArrayLike(Buffer, 'be', 8),
-  //         ],
-  //         program.programId,
-  //       )
-
-  //       commentSigners.push(commentSigner)
-  //     }
-
-  //     const comments = await program.account.commentAccount.fetchMultiple(
-  //       commentSigners,
-  //     )
-
-  //     comments.sort((a, b) => a.postTime.toNumber() - b.postTime.toNumber())
-
-  //     return comments
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
-
-  // const savePost = async text => {
-  //   let [stateSigner] = await anchor.web3.PublicKey.findProgramAddress(
-  //     [utf8.encode('state')],
-  //     program.programId,
-  //   )
-
-  //   let stateInfo
-
-  //   try {
-  //     stateInfo = await program.account.stateAccount.fetch(stateSigner)
-  //   } catch (error) {
-  //     await program.rpc.createState({
-  //       accounts: {
-  //         state: stateSigner,
-  //         authority: wallet.publicKey,
-  //         ...defaultAccounts,
-  //       },
-  //     })
-
-  //     return
-  //   }
-
-
-  //   let [postSigner] = await anchor.web3.PublicKey.findProgramAddress(
-  //     [utf8.encode('post'), stateInfo.postCount.toArrayLike(Buffer, 'be', 8)],
-  //     program.programId,
-  //   )
-
-  //   try {
-  //     await program.account.postAccount.fetch(postSigner)
-
-  //   } catch {
-  //     console.log("in catch")
-  //     await program.rpc.createPost(text, name, url, {
-  //       accounts: {
-  //         state: stateSigner,
-  //         post: postSigner,
-  //         authority: wallet.publicKey,
-  //         ...defaultAccounts,
-  //       },
-  //     }).then((resp) => {
-  //       // console.log("Posted successfully")
-  //       toast('Posted Successfully!', {
-  //         icon: '✅',
-  //         style: {
-  //           borderRadius: '10px',
-  //           background: '#252526',
-  //           color: '#fffcf9',
-  //         },
-  //       })
-  //       toast('Will update on network soon!', {
-  //         icon: '🚀',
-  //         style: {
-  //           borderRadius: '10px',
-  //           background: '#252526',
-  //           color: '#fffcf9',
-  //         },
-  //       })
-
-
-  //     }).catch((error) => {
-  //       console.log("user rejected the transaction")
-  //     })
-
-  //     setPosts(await program.account.postAccount.all())
-  //   }
-  // }
-
-  // const saveComment = async (text, index, count) => {
-  //   let [postSigner] = await anchor.web3.PublicKey.findProgramAddress(
-  //     [utf8.encode('post'), index.toArrayLike(Buffer, 'be', 8)],
-  //     program.programId,
-  //   )
-
-  //   try {
-  //     let [commentSigner] = await anchor.web3.PublicKey.findProgramAddress(
-  //       [
-  //         utf8.encode('comment'),
-  //         index.toArrayLike(Buffer, 'be', 8),
-  //         count.toArrayLike(Buffer, 'be', 8),
-  //       ],
-  //       program.programId,
-  //     )
-
-  //     await program.rpc.createComment(text, name, url, {
-  //       accounts: {
-  //         post: postSigner,
-  //         comment: commentSigner,
-  //         authority: wallet.publicKey,
-  //         ...defaultAccounts,
-  //       },
-  //     }).then((resp) => {
-  //       console.log(resp)
-  //       toast('Comment posted Successfully!', {
-  //         icon: '✅',
-  //         style: {
-  //           borderRadius: '10px',
-  //           background: '#252526',
-  //           color: '#fffcf9',
-  //         },
-  //       })
-  //     }).catch((error) => {
-  //       console.log("user rejected the transaction")
-  //     })
-
-  //     await program.account.commentAccount.fetch(commentSigner)
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
-
+      await program.account.commentAccount.fetch(commentSigner)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  
 
   return (
     <div className={style.wrapper}>
       <Toaster position='bottom-left' reverseOrder={false} />
-      {/* <div>
+      <div>
         {loading ? (
           <div style={{ color: 'white' }}>Loading...</div>
         ) : (
@@ -249,7 +249,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
             ))}
           </div>
         )}
-      </div> */}
+      </div>
     </div>
   )
 }
