@@ -24,6 +24,11 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   }
 
   const wallet = useWallet()
+  if(!wallet.connected){
+    setRegistered(false)
+    setName('')
+    setUrl('')
+}
  
   const connection = new anchor.web3.Connection(SOLANA_HOST)
   const program = getProgramInstance(connection, wallet)
@@ -213,12 +218,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
       console.error(error)
     }
   }
-   if(!wallet.connected){
-      setRegistered(false)
-      setName('')
-      setUrl('')
-      return
-  }
+  
 
   return (
     <div className={style.wrapper}>
