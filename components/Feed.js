@@ -26,8 +26,8 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   const wallet = useWallet()
   if(!wallet.connected){
       setRegistered(false)
-      // setName('')
-      // setUrl('')
+      setName('')
+      setUrl('')
   }
  
  
