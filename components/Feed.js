@@ -24,11 +24,14 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
   }
 
   const wallet = useWallet()
-  if(!wallet.connected){
-    setRegistered(false)
-    setName('')
-    setUrl('')
-}
+  useEffect(()=>{
+    if(!wallet.connected){
+      setRegistered(false)
+      setName('')
+      setUrl('')
+  }
+  })
+ 
  
   const connection = new anchor.web3.Connection(SOLANA_HOST)
   const program = getProgramInstance(connection, wallet)
