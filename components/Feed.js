@@ -18,7 +18,7 @@ const defaultAccounts = {
   systemProgram: SystemProgram.programId,
 }
 
-const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
+const Feed = ({  name, url, setRegistered, setName, setUrl }) => {
   const style = {
     wrapper: `flex-1 max-w-2xl mx-4`,
   }
@@ -44,7 +44,7 @@ const Feed = ({ connected, name, url, setRegistered, setName, setUrl }) => {
       }, 2000)
       getAllPosts()
       return () => clearInterval(interval)
-    }, [connected, getAllPosts])
+    }, [wallet.connected, getAllPosts])
   
   useEffect(() => {
     toast('Posts Refreshed!', {
