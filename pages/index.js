@@ -20,35 +20,38 @@ export default function Home() {
   const [url, setUrl] = useState('')
   const [users, setUsers] = useState([])
 
-  useEffect(() => {
-    ;(async () => {
-      await requestUsersData()
-    })()
-  }, [])
+  // useEffect(() => {
+  //   ;(async () => {
+  //     await requestUsersData()
+  //   })()
+  // }, [])
 
-  const wallet = useWallet()
+  // const wallet = useWallet()
 
-  const requestUsersData = async activeAccount => {
-    try {
-      const response = await fetch(`/api/fetchUsers`)
-      const data = await response.json()
+  // const requestUsersData = async activeAccount => {
+  //   try {
+  //     const response = await fetch(`/api/fetchUsers`)
+  //     const data = await response.json()
 
-      setUsers(data.data)
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  //     setUsers(data.data)
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }
 
   return (
-    <div className={style.wrapper}>
-      <Header name={name} url={url} />
+    <div className={style.wrapper}  >
+      <Header name={name} url={url}  />
 
       {registered ? (
-        <div className={style.homeWrapper}>
+        <div className={style.homeWrapper} >
           {/* <Sidebar name={name} url={url} /> */}
-          <div className={style.main}>
-            <Feed connected={wallet.connected} name={name} url={url} />
-          </div>
+          {/* <div className={style.main}>
+            <Feed connected={wallet.connected} name={name} url={url} setRegistered={setRegistered}
+             setName={setName}
+             setUrl={setUrl}
+            />
+          </div> */}
           {/* <RightSidebar
             getUsers={requestUsersData}
             users={users}
@@ -69,3 +72,4 @@ export default function Home() {
     </div>
   )
 }
+
