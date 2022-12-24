@@ -17,7 +17,7 @@ export const SOLANA_HOST = process.env.REACT_APP_SOLANA_API_URL
   : 'https://api.devnet.solana.com'
 
 export const STABLE_POOL_PROGRAM_ID = new PublicKey(
-  'HBBYq3RBMTZKF8v96UaKbsZdqQzuoPB7tTGLDENR4Fcw',
+  '2Xkykw4SBETFRJUbGF7audCCNP9cB3cTUT7RhajN97rT',
 )
 
 export const STABLE_POOL_IDL = facebook_clone

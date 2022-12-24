@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.devnet]
-facebook_clone = "HBBYq3RBMTZKF8v96UaKbsZdqQzuoPB7tTGLDENR4Fcw"
+facebook_clone = "2Xkykw4SBETFRJUbGF7audCCNP9cB3cTUT7RhajN97rT"
 
 [registry]
 url = "https://anchor.projectserum.com"

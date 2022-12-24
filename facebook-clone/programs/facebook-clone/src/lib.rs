@@ -4,7 +4,7 @@ use anchor_spl::token::{self, Token};
 use std::mem::size_of;
 
 // Declare program ID
-declare_id!("HBBYq3RBMTZKF8v96UaKbsZdqQzuoPB7tTGLDENR4Fcw");
+declare_id!("2Xkykw4SBETFRJUbGF7audCCNP9cB3cTUT7RhajN97rT");
 
 // Post and comment text length
 const TEXT_LENGTH: usize = 1024;
